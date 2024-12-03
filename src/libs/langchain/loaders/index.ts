@@ -13,6 +13,7 @@ import { MarkdownLoader } from './markdown';
 import { PdfLoader } from './pdf';
 import { PPTXLoader } from './pptx';
 import { TextLoader } from './txt';
+import { UnstructuredLoader } from './unstructured';
 
 class LangChainError extends Error {
   constructor(message: string) {
@@ -59,6 +60,10 @@ export class ChunkingLoader {
           return await TextLoader(txt);
         }
 
+        case 'xls': {
+          return await UnstructuredLoader(fileBlob, filename);
+        }
+
         default: {
           throw new Error(
             `Unsupported file type [${type}], please check your file is supported, or create report issue here: https://github.com/lobehub/lobe-chat/discussions/3550`,
@@ -98,6 +103,10 @@ export class ChunkingLoader {
     }
 
     if (ext && LANGCHAIN_SUPPORT_TEXT_LIST.includes(ext)) return 'text';
+
+    if (filename.endsWith('xlsx') || filename.endsWith('xls')) {
+      return 'xls';
+    }
   };
 
   private uint8ArrayToString(uint8Array: Uint8Array) {
