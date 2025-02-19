@@ -38,23 +38,30 @@ const getLlmOptionsFromPayload = (provider: string, payload: JWTPayload) => {
       }
 
       const apiKey = apiKeyManager.pick(payload?.apiKey || llmConfig[`${upperProvider}_API_KEY`]);
-      const baseURL = payload?.endpoint || process.env[`${upperProvider}_PROXY_URL`];
+      const baseURL = payload?.baseURL || process.env[`${upperProvider}_PROXY_URL`];
 
       return baseURL ? { apiKey, baseURL } : { apiKey };
     }
 
     case ModelProvider.Ollama: {
-      const baseURL = payload?.endpoint || process.env.OLLAMA_PROXY_URL;
+      const baseURL = payload?.baseURL || process.env.OLLAMA_PROXY_URL;
 
       return { baseURL };
     }
 
     case ModelProvider.Azure: {
       const { AZURE_API_KEY, AZURE_API_VERSION, AZURE_ENDPOINT } = llmConfig;
-      const apikey = apiKeyManager.pick(payload?.apiKey || AZURE_API_KEY);
-      const endpoint = payload?.endpoint || AZURE_ENDPOINT;
+      const apiKey = apiKeyManager.pick(payload?.apiKey || AZURE_API_KEY);
+      const baseURL = payload?.baseURL || AZURE_ENDPOINT;
       const apiVersion = payload?.azureApiVersion || AZURE_API_VERSION;
-      return { apiVersion, apikey, endpoint };
+      return { apiKey, apiVersion, baseURL };
+    }
+
+    case ModelProvider.AzureAI: {
+      const { AZUREAI_ENDPOINT, AZUREAI_ENDPOINT_KEY } = llmConfig;
+      const apiKey = payload?.apiKey || AZUREAI_ENDPOINT_KEY;
+      const baseURL = payload?.baseURL || AZUREAI_ENDPOINT;
+      return { apiKey, baseURL };
     }
 
     case ModelProvider.Bedrock: {
@@ -101,17 +108,10 @@ const getLlmOptionsFromPayload = (provider: string, payload: JWTPayload) => {
       return { apiKey };
     }
 
-    case ModelProvider.SenseNova: {
-      const { SENSENOVA_ACCESS_KEY_ID, SENSENOVA_ACCESS_KEY_SECRET } = llmConfig;
+    case ModelProvider.TencentCloud: {
+      const { TENCENT_CLOUD_API_KEY } = llmConfig;
 
-      const sensenovaAccessKeyID = apiKeyManager.pick(
-        payload?.sensenovaAccessKeyID || SENSENOVA_ACCESS_KEY_ID,
-      );
-      const sensenovaAccessKeySecret = apiKeyManager.pick(
-        payload?.sensenovaAccessKeySecret || SENSENOVA_ACCESS_KEY_SECRET,
-      );
-
-      const apiKey = sensenovaAccessKeyID + ':' + sensenovaAccessKeySecret;
+      const apiKey = apiKeyManager.pick(payload?.apiKey || TENCENT_CLOUD_API_KEY);
 
       return { apiKey };
     }

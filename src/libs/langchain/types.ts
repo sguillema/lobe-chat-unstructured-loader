@@ -1,1 +1,10 @@
-export type LangChainLoaderType = 'code' | 'ppt' | 'pdf' | 'markdown' | 'doc' | 'text' | 'latex' | 'xls';
+export type LangChainLoaderType =
+  | 'code'
+  | 'ppt'
+  | 'pdf'
+  | 'markdown'
+  | 'doc'
+  | 'text'
+  | 'latex'
+  | 'csv'
+  | 'xls';

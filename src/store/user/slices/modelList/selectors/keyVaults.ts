@@ -14,9 +14,7 @@ export const keyVaultsSettings = (s: UserStore): UserKeyVaults =>
 
 const openAIConfig = (s: UserStore) => keyVaultsSettings(s).openai || {};
 const bedrockConfig = (s: UserStore) => keyVaultsSettings(s).bedrock || {};
-const wenxinConfig = (s: UserStore) => keyVaultsSettings(s).wenxin || {};
 const ollamaConfig = (s: UserStore) => keyVaultsSettings(s).ollama || {};
-const sensenovaConfig = (s: UserStore) => keyVaultsSettings(s).sensenova || {};
 const azureConfig = (s: UserStore) => keyVaultsSettings(s).azure || {};
 const cloudflareConfig = (s: UserStore) => keyVaultsSettings(s).cloudflare || {};
 const getVaultByProvider = (provider: GlobalLLMProviderKey) => (s: UserStore) =>
@@ -46,6 +44,4 @@ export const keyVaultsConfigSelectors = {
   ollamaConfig,
   openAIConfig,
   password,
-  sensenovaConfig,
-  wenxinConfig,
 };

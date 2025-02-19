@@ -11,7 +11,7 @@ import { getJWTPayload } from '@/utils/server/jwt';
 import { checkAuthMethod } from './utils';
 
 type CreateRuntime = (jwtPayload: JWTPayload) => AgentRuntime;
-type RequestOptions = { createRuntime?: CreateRuntime; params: { provider: string } };
+type RequestOptions = { createRuntime?: CreateRuntime; params: Promise<{ provider: string }> };
 
 export type RequestHandler = (
   req: Request,
@@ -48,6 +48,21 @@ export const checkAuth =
         nextAuthAuthorized: oauthAuthorized,
       });
     } catch (e) {
+      const params = await options.params;
+
+      // if the error is not a ChatCompletionErrorPayload, it means the application error
+      if (!(e as ChatCompletionErrorPayload).errorType) {
+        if ((e as any).code === 'ERR_JWT_EXPIRED')
+          return createErrorResponse(ChatErrorType.SystemTimeNotMatchError, e);
+
+        // other issue will be internal server error
+        console.error(e);
+        return createErrorResponse(ChatErrorType.InternalServerError, {
+          error: e,
+          provider: params?.provider,
+        });
+      }
+
       const {
         errorType = ChatErrorType.InternalServerError,
         error: errorContent,
@@ -56,7 +71,7 @@ export const checkAuth =
 
       const error = errorContent || e;
 
-      return createErrorResponse(errorType, { error, ...res, provider: options.params?.provider });
+      return createErrorResponse(errorType, { error, ...res, provider: params?.provider });
     }
 
     return handler(req, { ...options, jwtPayload });

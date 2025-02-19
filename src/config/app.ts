@@ -23,8 +23,7 @@ if (typeof window === 'undefined' && isServerMode && !APP_URL) {
   throw new Error('`APP_URL` is required in server mode');
 }
 
-const ASSISTANT_INDEX_URL =
-  'https://registry.npmmirror.com/@lobehub/agents-index/v1/files/public';
+const ASSISTANT_INDEX_URL = 'https://registry.npmmirror.com/@lobehub/agents-index/v1/files/public';
 
 const PLUGINS_INDEX_URL = 'https://chat-plugins.lobehub.com';
 
@@ -48,6 +47,9 @@ export const getAppConfig = () => {
       PLUGIN_SETTINGS: z.string().optional(),
 
       APP_URL: z.string().optional(),
+      VERCEL_EDGE_CONFIG: z.string().optional(),
+      MIDDLEWARE_REWRITE_THROUGH_LOCAL: z.boolean().optional(),
+
       CDN_USE_GLOBAL: z.boolean().optional(),
       CUSTOM_FONT_FAMILY: z.string().optional(),
       CUSTOM_FONT_URL: z.string().optional(),
@@ -76,7 +78,11 @@ export const getAppConfig = () => {
 
       PLUGIN_SETTINGS: process.env.PLUGIN_SETTINGS,
 
+      VERCEL_EDGE_CONFIG: process.env.VERCEL_EDGE_CONFIG,
+
       APP_URL,
+      MIDDLEWARE_REWRITE_THROUGH_LOCAL: process.env.MIDDLEWARE_REWRITE_THROUGH_LOCAL === '1',
+
       CUSTOM_FONT_FAMILY: process.env.CUSTOM_FONT_FAMILY,
       CUSTOM_FONT_URL: process.env.CUSTOM_FONT_URL,
       CDN_USE_GLOBAL: process.env.CDN_USE_GLOBAL === '1',
